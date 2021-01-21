@@ -20,15 +20,24 @@ public class SortTest {
         for (int i = 0; i < arrays.length; i++){
             a[i] = Integer.parseInt(arrays[i]);
         }
+
         //选择排序
-        SelectionSort.sort(a);
-        assert isSorted(a);
-        show(a, "SelectionSort: ");
+        int[] a1 = a.clone();
+        SelectionSort.sort(a1);
+        assert isSorted(a1);
+        show(a1, "SelectionSort: ");
 
         //冒泡排序
-        BubbleSort.sort(a);
-        assert isSorted(a);
-        show(a,"BubbleSort: ");
+        int[] a2 = a.clone();
+        BubbleSort.sort(a2);
+        assert isSorted(a2);
+        show(a2,"BubbleSort: ");
+
+        //快速排序
+        int[] a3 = a.clone();
+        QuickSort.sort(a3,0,a.length-1);
+        assert isSorted(a3);
+        show(a3,"QuickSort: ");
 
     }
 
