@@ -6,6 +6,14 @@ package sort;
  * @ClassName QuickSort
  * @date 2021.01.20 23:06
  */
+
+/*
+快速排序是目前最快的通用排序算法
+其利用的是分而治之的算法思想
+找出一个基准值pivot将比其小的数放在左边，比其大的数放在右边
+然后对左边和右边再次分别进行排序
+通过不断缩小规模，直到待排序的元素个数为0或者1，此时不需要排序直接输出
+ */
 public class QuickSort {
     public static void sort(int[] a, int lo, int hi){
         if (hi <= lo)

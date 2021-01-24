@@ -33,11 +33,17 @@ public class SortTest {
         assert isSorted(a2);
         show(a2,"BubbleSort: ");
 
-        //快速排序
+        //插入排序
         int[] a3 = a.clone();
-        QuickSort.sort(a3,0,a.length-1);
+        InsertSort.sort(a3);
         assert isSorted(a3);
-        show(a3,"QuickSort: ");
+        show(a3,"InsetSort: ");
+
+        //快速排序
+        int[] a4 = a.clone();
+        QuickSort.sort(a4,0,a.length-1);
+        assert isSorted(a4);
+        show(a4,"QuickSort: ");
 
     }
 
