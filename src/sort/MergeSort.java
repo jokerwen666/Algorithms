@@ -20,15 +20,15 @@ merge操作最多需要比较(2^(n-k))次，此时对应的情况是恰好隔一
 public class MergeSort {
 
     //自顶向下的归并排序方法
-    public static void sort(int[] a, int lo, int hi){
+    public static void sort(int[] a, int[] aux, int lo, int hi){
         //如果只剩一个或零个元素，直接返回
         if(hi <= lo)
             return;
         //计算中间位置
         int mid = (hi - lo)/2 + lo;
         //对左边排序，对右边排序，最后合并
-        sort(a,lo,mid);
-        sort(a,mid+1,hi);
+        sort(a,aux,lo,mid);
+        sort(a,aux,mid+1,hi);
 
         /*
         是否对于所有情况都需要merge呢?
@@ -36,25 +36,41 @@ public class MergeSort {
         这一改动不影响排序的递归调用，但是对任意有序的子数组算法的运行时间就变为线性了
          */
         if (a[mid] > a[mid+1])
-            merge(a,lo,mid,hi);
+            merge(a,aux,lo,mid,hi);
     }
 
     //自底向上的归并排序算法
-    public static void sortBU(int[] a){
+    public static void sortBU(int[] a, int[] aux){
+        int n = a.length;
 
+        //sz为子数组大小，子数组大小表示已经按序的数组大小，初始值为1
+        for (int sz = 1; sz < n; sz+=sz){
+            //每次令lo=0开始遍历，下一次lo的起始为（lo+2*sz），因为每次merge是将两个sz大小的子数组进行合并
+            for (int lo = 0; lo+sz < n; lo += sz+sz){
+                merge(a,aux, lo, lo+sz-1, Math.min(lo+sz+sz-1,n-1));
+            }
+        }
     }
-
 
     /*
     将数组a中的已经排序的前半部分和后半部分合并
     前半部分：lo~mid
     后半部分：mid+1~hi
      */
-    public static void merge(int[] a, int lo, int mid, int hi){
+    public static void merge(int[] a, int[] aux, int lo, int mid, int hi){
         int i = lo;
         int j = mid+1;
-        //先将a数组克隆一份到aux
-        int[] aux = a.clone();
+        /*
+        先将a数组克隆一份到aux
+
+        需要说明，为什么不在merge里创建局部变量aux
+        为了避免每次归并时，即使是归并最小的数组，都创建一个新的数组
+        如果这么做，那么创建新数组将成为归并排序的主要部分
+        因此这里通过传递参数来实现
+         */
+        for (int k = lo; k <= hi; k++)
+            aux[k] = a[k];
+
         int pos = 0;
 
         //定义两个指针，一个指向数组前半段，一个指向数组后半段

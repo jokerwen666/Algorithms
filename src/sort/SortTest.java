@@ -45,6 +45,20 @@ public class SortTest {
         assert isSorted(a4);
         show(a4,"QuickSort: ");
 
+        //归并排序(自顶向下)
+        int[] a5 = a.clone();
+        int[] aux = new int[a5.length];
+        MergeSort.sort(a5,aux,0,a5.length-1);
+        assert isSorted(a5);
+        show(a5,"MergeSort: ");
+
+        //归并排序(自低向上)
+        int[] a6 = a.clone();
+        int[] aux_= new int[a6.length];
+        MergeSort.sortBU(a6,aux_);
+        assert isSorted(a6);
+        show(a6,"MergeSortBU: ");
+
     }
 
 
