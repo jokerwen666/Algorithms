@@ -23,9 +23,6 @@ public class MaxPQ<Key extends Comparable<Key>> {
         N = 0;
     }
 
-    public MaxPQ(Key[] a) {
-
-    }
 
     public void insert(Key v) {
         Node current = top;
@@ -77,11 +74,14 @@ public class MaxPQ<Key extends Comparable<Key>> {
     }
 
     public Key max() {
-        return null;
+        return top.key;
     }
 
     public Key delMax() {
-        return null;
+        Key key = top.key;
+        top = top.next;
+        N--;
+        return key;
     }
 
     public boolean isEmpty() {
