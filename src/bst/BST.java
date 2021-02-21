@@ -55,4 +55,85 @@ public class BST <Key extends Comparable<Key>, Value>{
         return x;
     }
 
+    public Key min() {return min(root).key;}
+    private Node min(Node x) {
+        if (x.left == null) return x;
+        return min(x.left);
+    }
+
+    public Key max() {return max(root).key;}
+    private Node max(Node x) {
+        if (x.right == null) return x;
+        return max(x.right);
+    }
+
+    public Key floor(Key key) {
+        Node x = floor(root,key);
+        return x != null ? x.key : null;
+    }
+    private Node floor(Node x, Key key) {
+        if(x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp < 0) return floor(x.left,key);
+        Node t = floor(x.right,key);
+        if (t != null) return t;
+        else return x;
+    }
+
+    public Key celling(Key key) {
+        Node x = celling(root,key);
+        return x != null ? x.key : null;
+    }
+    private Node celling(Node x, Key key) {
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp > 0) return celling(x.right,key);
+        Node t = celling(x.left,key);
+        if (t != null) return t;
+        else return x;
+    }
+
+    //这一步需要将root重新赋值，因为删除了最小键结点，可能导致根节点发生改变
+    public void deleteMin() {root = deleteMin(root);}
+    private Node deleteMin(Node x) {
+        if (x.left == null) return x.right;
+        x.left = deleteMin(x.left);
+        //结点数目会递归发生改变
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    public void deleteMax() {root = deleteMax(root);}
+    private Node deleteMax(Node x) {
+        if (x.right == null) return x.left;
+        x.right = deleteMax(x.right);
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    //删除某个结点的时候，主要分为四步：
+    //（1）找到需要删除的结点
+    //（2）如果需要删除结点的左子树或者右子树为空，则直接返回不为空的子树的根结点
+    //（3）如果需要删除结点的左子树或者右子树均不为空，则找出右子树中的最小键结点，并将该结点的右孩子结点指向删除过该结点的原右子树的根节点
+    //（4）同时将该结点的左孩子指向原左子树的根节点，然后将被删除结点父节点的左链接/右链接指向该结点
+    public void delete(Key key) {root = delete(root,key);}
+    private Node delete(Node x, Key key) {
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x.left = delete(x.left,key);
+        else if (cmp > 0) x.right = delete(x.right,key);
+        else {
+            if (x.right == null) return x.left;
+            if (x.left == null) return x.right;
+            Node t = x;
+            x = min(x.right);
+            x.right = deleteMin(x.right);
+            x.left = t.left;
+        }
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
 }
