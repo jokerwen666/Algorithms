@@ -3,6 +3,13 @@ package bst;
 /**
  * @author Zhang Bowen
  * @Description
+ * 二叉搜索树BST
+ * 左子树中所有结点的值均小于根结点值
+ * 右子树中所有结点的值均大于根节点值
+ * 平均情况下的查找、插入操作的时间复杂度为O(lgN)
+ * 最差情况下的查找、插入操作的时间复杂度为O(N)\
+ * 造成最差情况的原因是，根据一组数据构造的BST不一定是平衡的
+ *
  * @ClassName BST
  * @date 2021.02.06 21:29
  */
@@ -107,6 +114,7 @@ public class BST <Key extends Comparable<Key>, Value>{
 
     public void deleteMax() {root = deleteMax(root);}
     private Node deleteMax(Node x) {
+        //BST中的最大结点是沿着右子树遍历的最后一个结点，一直沿着右向下查找，直到找到一个没有右结点的结点，删除（返回左结点，该结点没有被引用会被回收）即可
         if (x.right == null) return x.left;
         x.right = deleteMax(x.right);
         x.N = size(x.left) + size(x.right) + 1;

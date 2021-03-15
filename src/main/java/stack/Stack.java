@@ -1,7 +1,5 @@
 package stack;
 
-import queue.Queue;
-
 import javax.xml.soap.Node;
 import java.util.Iterator;
 

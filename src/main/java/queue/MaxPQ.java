@@ -1,5 +1,7 @@
 package queue;
 
+import redblackBST.RedBlackBST;
+
 /**
  * @author Zhang Bowen
  * @Description
@@ -22,7 +24,6 @@ public class MaxPQ<Key extends Comparable<Key>> {
         top = null;
         N = 0;
     }
-
 
     public void insert(Key v) {
         Node current = top;
