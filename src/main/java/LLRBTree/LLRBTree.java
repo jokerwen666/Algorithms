@@ -80,9 +80,9 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
     }
 
     //删除最小结点
-    //删除最小值的时候如果删除的是3结点是很简单的，只需要删除一个结点，留下一个2结点即可，
+    //删除最小键的时候如果删除的是3结点是很简单的，只需要删除一个结点，留下一个2结点即可，
     //但是如果删除一个2结点就有可能导致树的平衡性发生变化（从根结点到每个叶子结点路径中的黑链接数量不一样）
-    //处理办法是从上到下进行变换，保证在删除的时候被删除值所在的结点不是一个2结点
+    //处理办法是从上到下进行变换，保证在删除的时候被删除键所在的结点不是一个2结点
     //因此我们需要做的是在删除操作的向下搜索的过程中合并所看到的所有2结点，这一操作与自顶向下构造2-3-4的插入操作是互逆的（2-3-4树的插入是分解4结点）
     public void deleteMin() {
         if (isEmpty()) throw new NoSuchElementException("LLRBTree underflow");
@@ -98,7 +98,7 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
         //因为已经保证被删除的结点不可能是2结点，因此从根结点出发沿着左子树一路搜索下去，找到最后一个结点，删除即可
         if (x.left == null) return null;
 
-        //意味着x的左子节点为一个2节点，这时我们需要将这个2结点改为3结点或者临时的4结点（删除最小值一定在左子树，右子树不需要处理）
+        //意味着x的左子节点为一个2节点，这时我们需要将这个2结点改为3结点或者临时的4结点（删除最小键一定在左子树，右子树不需要处理）
         //isRed(x.left)为true，说明x和x.left此时和合为一个3结点，此时x.color必为black
         //isRedisRed(x.left.left)为true，说明x.left和x.left.left此时合为一个3-结点，此时x.color必为red（因为可以保证此时x结点已经被处理为非2结点）
         if (!isRed(x.left) && !isRed(x.left.left))
@@ -122,7 +122,36 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
         if (!isEmpty()) root.color = black;
     }
     private Node deleteMax(Node x) {
-        //如果一个结点的左节点为2-结点，则将其右旋，这么做是为了保证待删除的键所对应的BST结点没有子结点
+        /* 如果结点x和其左子结点合为一个3结点时，如果不进行变换：
+           （1）假设x就是待删除的最大结点，x没有右子结点，但是x与其左子节点合为一个3结点，此时会连带左子结点把整个3结点删除
+           （2）假设x不是待删除的最大结点，x的右子节点是一个2结点，但是x与其左子节点合为一个3结点，在后续通过flipColor函数进行2结点扩充时，不能直接将兄弟结点的某个结点借过来，这时删除最大键会造成树的不平衡
+           为什么右变换需要，而左变换不需要呢？因为我们构造的是一颗左倾的红黑树，红链接必是左链接，因此3结点只有一种情况：
+
+                          3结点较大键
+                          /      \
+                   红链接 /        \ 黑链接
+                        /          \
+                     3结点较小键     最大键（2结点）
+            （如果最大键如图所示，则3结点较小键必有左右子结点，因为红黑树是关于黑链接平衡的）
+
+            因此如果不进行变换，当3结点的左子结点是2结点时，我们无法直接通过flipColor函数进行结点合并，也就是说如果想使用flipColor函数将一个非2结点与其父结点和兄弟结点合并时，必须要求该非2结点的父结点的左右链接均为黑
+            因此如果x的左链接是红色，我们直接将其右旋以此保证3结点中较大键的左右链接均为黑链接
+
+            而左变换时不需要，因为红链接总在左边，因此最小键的位置一定位于3结点中较小键结点的左子树中
+            因此可以直接通过flipColor函数进行合并
+
+                          3结点较大键（如果最小键如图所示，则必有右子结点）
+                          /
+                   红链接 /
+                        /
+                     3结点较小键（如果最小键如图所示，则必有右子结点）
+                      /
+                     / 黑链接
+                    /
+                 最小键（2结点）
+         */
+
+        //综上所述，进行本步骤的原因是为了保持删除后续结点后红黑树的平衡性，造成比左处理多这一步骤的原因是左倾红黑树中的红链接一定是左链接
         if (isRed(x.left)) x = rotateRight(x);
 
         if (x.right == null) return null;
@@ -155,21 +184,34 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
             x.left = delete(x.left,key);
         }
 
-        else if (cmp > 0) {
+        else {
+            //如果待删除的结点大于等于x结点，首先需要进行翻转的原因如下：
+            //（1）大于x结点或等于x结点但是x结点右子结点时：为了保证删除后续结点的时候保持平衡，可能会造成不平衡的情况就是x结点的右结点是2结点，具体的分析见前
+            //（2）待删除结点等于x结点，其x结点没有右子结点时：时为了保证不把整个2结点删除
             if (isRed(x.left))
                 x = rotateRight(x);
+
+            //如果待删除结点等于x结点，其x结点没有右子结点时，直接删除即可，因为在删除的搜索过程中一直在动态地把路径上的2结点进行合并，所以可以保证当前结点不是一个2结点
+            if (cmp == 0 && x.right == null)
+                return null;
+
+            //正常的处理2结点
             if (!isRed(x.right) && !isRed(x.right.left))
                 x = moveRedRight(x);
-            x.right = delete(x.right,key);
+
+            //如果待删除结点等于x结点但是x结点右子结点,将其置为右子树中的最小键，同时新的右子树为删除了最小键后的原右子树
+            if (cmp == 0) {
+                //将x的值置为右子树中最小键的对应值
+                x.val = get(x.right, min(x.right).key);
+                x.key = min(x.right).key;
+                x.right = deleteMin(x.right);
+            }
+
+            else x.right = delete(x.right, key);
         }
 
-        else {
-            //如果x为待删除键时，还需要将子结点调成非2-结点，否则在删除
-            if (isRed(x.left))
-                x = rotateRight(x);
-            if (!isRed(x.right) && !isRed(x.right.left))
-                x = moveRedRight(x);
-        }
+        //解开临时的4结点
+        return balance(x);
     }
 
 
@@ -183,6 +225,7 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
     //当出现破坏二叉平衡树规则的时候可以通过旋转操作来进行修复
     //左（右）旋转操作的本质是将原来父结点的左（右）链接旋转为新父结点的右（左）链接以此将树重新归为平衡状态
     //通过旋转可以将原本的父结点变为新父结点的左孩子或者有右孩子，以此来控制树的高度保持平衡
+    //需要注意旋转或者变色都是局部性操作，对整体的平衡性没有影响
 
     //左旋转
     private Node rotateLeft(Node h) {
@@ -241,8 +284,9 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
         flipColor(x);
         //如果结点x的右子结点为3结点，那么我们需要从右子结点中借一个键移动到父结点中，然后将父结点中的最小键（父结点一定不是2结点）移动到左子结点中合并为一个3结点
         if (isRed(x.right.left)) {
-            x = rotateRight(x);
-            //处理完以后再次变换颜色，将新创建的2结点与父亲节点、兄弟结点解开
+            x.right = rotateRight(x.right);
+            x = rotateLeft(x);
+            //这时父结点、右非2结点、左2结点全部合在了一起成为了一个大结点，这时需要解开这个大结点，将右非2结点的一个结点还给父结点
             flipColor(x);
         }
         return x;
@@ -253,7 +297,10 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
         flipColor(x);
 
         if (isRed(x.left.left)) {
-            x.left = rotateLeft(x.left);
+            //这里对于右边的2结点扩充操作比左边的结点扩充操作少了一步变换
+            //究其根本在于，不管是左还是右非2子结点与父结点直接相连的键都是最大键
+            //在左子结点扩充中我们需要将右非2子结点中的最小键先旋转上来，而右子结点扩充不需要
+
             x = rotateRight(x);
             //处理完以后再次变换颜色，将新创建的2结点与父亲节点、兄弟结点解开
             flipColor(x);
@@ -261,14 +308,14 @@ public class LLRBTree <Key extends Comparable<Key>, Value>{
         return x;
     }
 
-    //求最小值
+    //求最小键
     public Key min() {return min(root).key;}
     private Node min(Node x) {
         if (x.left == null) return x;
         return min(x.left);
     }
 
-    //求最大值
+    //求最大键
     public Key max() {return max(root).key;}
     private Node max(Node x) {
         if (x.right == null) return x;
