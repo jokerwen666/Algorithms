@@ -47,7 +47,55 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
             N = n;
             this.color = color;
         }
+
     }
+
+    public int size() {return size(root);}
+    private int size(Node x) {return x.N;}
+
+    private boolean isRed(Node x) {
+        if (x == null) return black;
+        return x.color == red;
+    }
+
+    private void rotateRight(Node p) {
+        if (p != null) {
+            //l结点保存p的左子结点
+            Node l = p.left;
+            //p的左子结点设为l的右子结点
+            p.left = l.right;
+            //如果l的右子结点不为空，则将其父结点设为p
+            if (l.right != null) l.right.parent = p;
+            //l的父结点设为p的父结点
+            l.parent = p.parent;
+            //如果p的父结点为空，说明原本p是根结点，旋转后将l设为新的根结点
+            if (p.parent == null) root = l;
+                //p是其父结点的右子结点，将其父节点的右子结点设为l
+            else if (p.parent.right == p) p.parent.right = l;
+                //p是其父结点的左子结点，将其父节点的左子结点设为l
+            else p.parent.left = l;
+            //l的右子结点设为p
+            l.right = p;
+            //p的父结点设为l
+            p.parent = l;
+        }
+    }
+
+    private void rotateLeft(Node p) {
+        if (p != null) {
+            Node r = p.right;
+            p.right = r.left;
+            if (r.left != null) r.left.parent = p;
+            r.parent = p.parent;
+            if (p.parent == null) root = r;
+            else if (p.parent.right == p) p.parent.right = r;
+            else p.parent.left = r;
+            r.left = p;
+            p.parent = r;
+        }
+    }
+
+
 
 
 
