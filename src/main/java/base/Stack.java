@@ -1,6 +1,5 @@
-package stack;
+package base;
 
-import javax.xml.soap.Node;
 import java.util.Iterator;
 
 /**
@@ -19,7 +18,7 @@ public class Stack<Item> implements Iterable<Item> {
     private Node top;
     private int N;
 
-    private class Node{
+    protected class Node{
         Item item;
         Node next;
     }
@@ -55,20 +54,19 @@ public class Stack<Item> implements Iterable<Item> {
         return item;
     }
 
-    @Override
     public Iterator<Item> iterator() {
         return new Stack.ListIterator();
     }
 
     private class ListIterator implements Iterator<Item>
     {
-        private Stack.Node current = top;
+        private Node current = top;
         public boolean hasNext(){
             return current != null;
         }
         public void remove(){ }
         public Item next(){
-            Item item = top.item;
+            Item item = current.item;
             current = current.next;
             return item;
         }

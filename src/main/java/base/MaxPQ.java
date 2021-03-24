@@ -1,6 +1,4 @@
-package queue;
-
-import redblackBST.RedBlackBST;
+package base;
 
 /**
  * @author Zhang Bowen

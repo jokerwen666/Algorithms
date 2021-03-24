@@ -1,10 +1,6 @@
-package LLRBTree;
-
-import bst.BST;
-import redblackBST.RedBlackBST;
+package tree;
 
 import java.util.NoSuchElementException;
-import java.util.TreeMap;
 
 /**
  * 该类是一个基于2-3树的左倾红黑树的递归实现，与jdk1.8自带的TreeMap红黑树不一样
@@ -27,7 +23,7 @@ import java.util.TreeMap;
  * @date 2021.02.21 18:00
  */
 
-public class LLRBTree <Key extends Comparable<Key>, Value>{
+public class LLRBTree <Key extends Comparable<Key>, Value> {
     private static final boolean red = true; //红链接
     private static final boolean black = false; //黑链接
 

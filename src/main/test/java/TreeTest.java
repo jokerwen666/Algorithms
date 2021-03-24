@@ -1,4 +1,4 @@
-import LLRBTree.LLRBTree;
+import tree.LLRBTree;
 import org.junit.Test;
 
 public class TreeTest {

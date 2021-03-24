@@ -1,4 +1,4 @@
-package bst;
+package tree;
 
 /**
  * @author Zhang Bowen
@@ -13,7 +13,7 @@ package bst;
  * @ClassName BST
  * @date 2021.02.06 21:29
  */
-public class BST <Key extends Comparable<Key>, Value>{
+public class BST <Key extends Comparable<Key>, Value> {
     private Node root;
     private class Node {
         private final Key key;

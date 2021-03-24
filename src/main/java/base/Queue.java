@@ -1,4 +1,4 @@
-package queue;
+package base;
 
 import java.util.Iterator;
 
@@ -54,7 +54,6 @@ public class Queue<Item> implements Iterable<Item>{
         return item;
     }
 
-    @Override
     public Iterator<Item> iterator() {
         return new ListIterator();
     }
