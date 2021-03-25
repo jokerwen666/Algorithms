@@ -1,9 +1,14 @@
 package symboltable;
 
+
+import java.util.*;
+
 /*
 基于拉链法的散列表
  */
 public class SeparateChainingHashST<Key, Value> {
+    HashSet<Integer> hashSet = new HashSet<Integer>();
+
 
     private static final int INIT_CAPACITY = 4;
     private int n;

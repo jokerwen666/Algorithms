@@ -34,8 +34,9 @@ public class Bag<Item> implements Iterable<Item> {
         return first != null;
     }
 
+
     public Iterator<Item> iterator() {
-        return null;
+        return new ListIterator();
     }
 
     private class ListIterator implements Iterator<Item>

@@ -54,8 +54,12 @@ public class Stack<Item> implements Iterable<Item> {
         return item;
     }
 
+    public Item peak() {
+        return top.item;
+    }
+
     public Iterator<Item> iterator() {
-        return new Stack.ListIterator();
+        return new ListIterator();
     }
 
     private class ListIterator implements Iterator<Item>
